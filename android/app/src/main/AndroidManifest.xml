@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <application
         android:label="wesocet"
         android:name="${applicationName}"
@@ -33,9 +37,7 @@
              <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyBDzv-BMCuJSK1dtu-l_jKwUbz1rmMnS7k"/>
-       <service
-        android:name="com.lyokone.location.FlutterLocationService"
-        android:foregroundServiceType="location" />
+      
     
     </application>
     <!-- Required to query activities that can process text, see:
@@ -49,10 +51,4 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
-   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-   
-    
 </manifest>

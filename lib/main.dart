@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart'
+    hide PermissionStatus;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -43,6 +47,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    checkLocationPermission();
     _getLocation();
   }
 
@@ -50,6 +55,38 @@ class _MapPageState extends State<MapPage> {
   void dispose() {
     _locationSubscription?.cancel();
     super.dispose();
+  }
+
+  Future<void> checkLocationPermission() async {
+    try {
+      // Check location service
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are not enabled
+        await Geolocator.openLocationSettings();
+        return;
+      }
+
+      // Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // Permissions are denied
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are permanently denied
+        await openAppSettings();
+        return;
+      }
+
+      // Permission granted, proceed with your location operations
+    } catch (e) {
+      print('❌ ERROR: $e');
+    }
   }
 
   Future<void> _getLocation() async {
